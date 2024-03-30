@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.536">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Xinrui Xiong 806329308">
+<meta name="dcterms.date" content="2024-01-23">
+
+<title>Biostat 212a Homework 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Homework1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Homework1_files/libs/quarto-html/quarto.js"></script>
+<script src="Homework1_files/libs/quarto-html/popper.min.js"></script>
+<script src="Homework1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Homework1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Homework1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Homework1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Homework1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Homework1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Homework1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#filling-gaps-in-lecture-notes-10pts" id="toc-filling-gaps-in-lecture-notes-10pts" class="nav-link active" data-scroll-target="#filling-gaps-in-lecture-notes-10pts"><span class="header-section-number">1</span> Filling gaps in lecture notes (10pts)</a>
+  <ul>
+  <li><a href="#optimal-regression-function" id="toc-optimal-regression-function" class="nav-link" data-scroll-target="#optimal-regression-function"><span class="header-section-number">1.1</span> Optimal regression function</a></li>
+  <li><a href="#bias-variance-trade-off" id="toc-bias-variance-trade-off" class="nav-link" data-scroll-target="#bias-variance-trade-off"><span class="header-section-number">1.2</span> Bias-variance trade-off</a></li>
+  </ul></li>
+  <li><a href="#isl-exercise-2.4.3-10pts" id="toc-isl-exercise-2.4.3-10pts" class="nav-link" data-scroll-target="#isl-exercise-2.4.3-10pts"><span class="header-section-number">2</span> ISL Exercise 2.4.3 (10pts)</a></li>
+  <li><a href="#isl-exercise-2.4.4-10pts" id="toc-isl-exercise-2.4.4-10pts" class="nav-link" data-scroll-target="#isl-exercise-2.4.4-10pts"><span class="header-section-number">3</span> ISL Exercise 2.4.4 (10pts)</a></li>
+  <li><a href="#isl-exercise-2.4.10-30pts" id="toc-isl-exercise-2.4.10-30pts" class="nav-link" data-scroll-target="#isl-exercise-2.4.10-30pts"><span class="header-section-number">4</span> ISL Exercise 2.4.10 (30pts)</a></li>
+  <li><a href="#isl-exercise-3.7.3-12pts" id="toc-isl-exercise-3.7.3-12pts" class="nav-link" data-scroll-target="#isl-exercise-3.7.3-12pts"><span class="header-section-number">5</span> ISL Exercise 3.7.3 (12pts)</a></li>
+  <li><a href="#isl-exercise-3.7.15-20pts" id="toc-isl-exercise-3.7.15-20pts" class="nav-link" data-scroll-target="#isl-exercise-3.7.15-20pts"><span class="header-section-number">6</span> ISL Exercise 3.7.15 (20pts)</a></li>
+  <li><a href="#bonus-question-20pts" id="toc-bonus-question-20pts" class="nav-link" data-scroll-target="#bonus-question-20pts"><span class="header-section-number">7</span> Bonus question (20pts)</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Biostat 212a Homework 1</h1>
+<p class="subtitle lead">Due Jan 23, 2024 @ 11:59PM</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Xinrui Xiong 806329308 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 23, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="filling-gaps-in-lecture-notes-10pts" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="filling-gaps-in-lecture-notes-10pts"><span class="header-section-number">1</span> Filling gaps in lecture notes (10pts)</h2>
+<p>Consider the regression model <span class="math display">\[
+Y = f(X) + \epsilon,
+\]</span> where <span class="math inline">\(\operatorname{E}(\epsilon) = 0\)</span>.</p>
+<section id="optimal-regression-function" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="optimal-regression-function"><span class="header-section-number">1.1</span> Optimal regression function</h3>
+<p>Show that the choice <span class="math display">\[
+f_{\text{opt}}(X) = \operatorname{E}(Y | X)
+\]</span> minimizes the mean squared prediction error <span class="math display">\[
+\operatorname{E}\{[Y - f(X)]^2\},
+\]</span> where the expectations averages over variations in both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. (Hint: condition on <span class="math inline">\(X\)</span>.)</p>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>Since the mean squared prediction error can be defined as</p>
+<p><span class="math display">\[
+\operatorname{MSE}={E}\{[Y - f(X)]^2\},
+\]</span> we can have</p>
+<p><span class="math display">\[
+\begin{aligned}
+E[Y - f(X)|X]^2 &amp;=E[Y - E(Y|X)+E(Y|X)-f(X)|X]^2\\        &amp;=E[(Y-E(Y|X))^2|X]+2E[(Y-E(Y|X))(E(Y|X)-f(x))|X]+E[(E(Y|X)-f(x))^2|X].\\
+\end{aligned}
+\]</span></p>
+<p>Since <span class="math inline">\(E(Y|X)-f(x)\)</span> is a function of <span class="math inline">\(X\)</span>, for any given <span class="math inline">\(X\)</span>, <span class="math inline">\(E(Y|X)-f(x)\)</span> can be seen as a constant.</p>
+<p>That means</p>
+<p><span class="math display">\[
+\begin{aligned}
+2E[(Y-E(Y|X))(E(Y|X)-f(x))|X]&amp;=2E[E(Y|X)-f(X)|X]E[Y-E(Y|X)|X]\\
+&amp;=2E[E(Y|X)-f(X)](E(Y|X)-E(Y|X))\\
+&amp;=0.
+\end{aligned}
+\]</span></p>
+<p>So,</p>
+<p><span class="math display">\[
+E[Y - f(X)|X]^2 \ge E[Y-E(Y|X)|X],
+\]</span></p>
+<p>calculate the expectations for both sides, we can have</p>
+<p><span class="math display">\[
+E[Y - f(X)]^2 \ge E[Y-E(Y|X)].
+\]</span></p>
+<p>So <span class="math inline">\(f_{\text{opt}}(X) = \operatorname{E}(Y | X)\)</span> minimizes the mean squared prediction error.</p>
+</font><p><font color="Blue"></font></p>
+</section>
+<section id="bias-variance-trade-off" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="bias-variance-trade-off"><span class="header-section-number">1.2</span> Bias-variance trade-off</h3>
+<p>Given an estimate <span class="math inline">\(\hat f\)</span> of <span class="math inline">\(f\)</span>, show that the test error at a <span class="math inline">\(x_0\)</span> can be decomposed as <span class="math display">\[
+\operatorname{E}\{[y_0 - \hat f(x_0)]^2\} = \underbrace{\operatorname{Var}(\hat f(x_0)) + [\operatorname{Bias}(\hat f(x_0))]^2}_{\text{MSE of } \hat f(x_0) \text{ for estimating } f(x_0)} + \underbrace{\operatorname{Var}(\epsilon)}_{\text{irreducible}},
+\]</span> where the expectation averages over the variability in <span class="math inline">\(y_0\)</span> and <span class="math inline">\(\hat f\)</span>.</p>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>Expand the test error <span class="math inline">\(E[y_0 - \hat f(x_0)]^2\)</span>, we can have</p>
+<p><span class="math display">\[
+\begin{aligned}
+E[y_0 - \hat f(x_0)]^2&amp;=E[y_0^2-2y_0\hat f(x_0)+\hat f(x_0)^2]\\
+&amp;=E[y_0^2]+E[\hat f(x_0)^2]-2E[y_0\hat f(x_0)].
+\end{aligned}
+\]</span></p>
+<p>We model <span class="math inline">\(y=f+\epsilon\)</span>, then we have</p>
+<p><span class="math display">\[
+\begin{aligned}
+E[y_0^2]&amp;=E[(f+\epsilon)^2]\\
+&amp;=E[f^2]+2E[f\epsilon]+E[\epsilon^2] \\
+&amp;=f^2+2fE[\epsilon]+E[\epsilon^2] \qquad since\ f \ does\ not\  depend \ on \ the \ data\\
+&amp;=f^2+2f\cdot0+Var(\epsilon).\qquad since\ E[\epsilon]=0
+\end{aligned}
+\]</span></p>
+<p>And since <span class="math inline">\(Var[X]=E[(X-E[X])^2]=E[X^2]-E[X]^2\)</span>, we have</p>
+<p><span class="math display">\[
+E[\hat f^2]=Var(\hat f)+E[\hat f^2].
+\]</span></p>
+<p>For <span class="math inline">\(E[y_0\hat f]\)</span>, we have</p>
+<p><span class="math display">\[
+\begin{aligned}
+E[y_0\hat f]&amp;=E[(f+\epsilon)\hat f]\\
+&amp;=E[f\hat f]+E[\epsilon\hat f]\\
+&amp;=E[f\hat f]+E[\epsilon]E[\hat f] \qquad since\ \hat f \ and \ \epsilon\ are \ independent \\
+&amp;=fE[\hat f]. \qquad \ sinceE[\epsilon]=0
+\end{aligned}
+\]</span></p>
+<p>Finally, we have the sum of the 3 parts,</p>
+<p><span class="math display">\[
+\begin{aligned}
+E[y_0 - \hat f(x_0)]^2 &amp;= f(x_0)^2+Var(\epsilon)+Var(\hat f(x-0))+E[\hat f(x_0)^2]-2f(x_0)E[\hat f(x_0)]\\
+&amp;=(f(x_0)-E[\hat f(x_0)])^2+Var(\epsilon)+Var(\hat f(x_0)),
+\end{aligned}
+\]</span></p>
+<p>the proposition is proved.</p>
+</font><p><font color="Blue"></font></p>
+</section>
+</section>
+<section id="isl-exercise-2.4.3-10pts" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="isl-exercise-2.4.3-10pts"><span class="header-section-number">2</span> ISL Exercise 2.4.3 (10pts)</h2>
+<p>We now revisit the bias-variance decomposition.</p>
+<p>(a) Provide a sketch of typical (squared) bias, variance, training error, test error, and Bayes (or irreducible) error curves, on a single plot, as we go from less flexible statistical learning methods towards more flexible approaches. The x-axis should represent the amount of flexibility in the method, and the y-axis should represent the values for each curve. There should be five curves. Make sure to label each one.</p>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>To draw multiple lines, we consider use ggplot() for the task.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</font><p><font color="Blue"></font></p>
+<p>(b) Explain why each of the five curves has the shape displayed in part (a).</p>
+<p><font color="Blue"></font></p><font color="Blue">
+<p><strong>Bayes error:</strong></p>
+<p>Bayes error is a constant value regardless of flexibility, as it is the irreducible error that represents the noise and uncertainty in the data that is unable to eliminate.</p>
+<p><strong>Bias:</strong></p>
+<p>When the model flexibility is low, the data patterns might be oversimplified, so the bias is high. It will decreases as the flexibility increases.</p>
+<p><strong>Test error:</strong></p>
+<p>Test error decreases as flexibility increases at the beginning, since the ability of the model to capture the data patterns is improved. However, when flexibility keeps on increasing, the model will meet the “overfitting” problem, which can make the model unable to obtain good outcomes from new input data.</p>
+<p><strong>Training error:</strong></p>
+<p>Training error decreases as model flexibility increases, since the models with higher flexibility can fit the training data better, decreasing the training error.</p>
+<p><strong>Variance:</strong></p>
+<p>Variance tends to increase with the model flexibility increases, since more flexible models are able to fit the training data more precisely, the complexity become higher, leading to higher variance.</p>
+</font><p><font color="Blue"></font></p>
+</section>
+<section id="isl-exercise-2.4.4-10pts" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="isl-exercise-2.4.4-10pts"><span class="header-section-number">3</span> ISL Exercise 2.4.4 (10pts)</h2>
+<ol start="4" type="1">
+<li>You will now think of some real-life applications for statistical learning.</li>
+</ol>
+<!-- -->
+<ol type="a">
+<li>Describe three real-life applications in which classification might be useful. Describe the response, as well as the predictors. Is the goal of each application inference or prediction? Explain your answer.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>(1) One example of classification in real-life is snoring detection, which is an important method for the diagnosis of sleeping apnea. In this problem, the predictors are the sound events in the audio recording of night sleeping, while the response is whether the sound events are snoring(rather than noise). For this kind of snoring detection, the goal is inference (of whether the sound events are snoring)</p>
+<p>(2) Another example is the application of auto-driving. The auto-driving system generally has one part to do real-time classification of the detected obstacles. In this problem, the predictors can be either the 2D images or 3D point clouds of the obstacles and the response is the type of the obstacles. For this kind of task, the goal is inference (of what’s the type of the detected obstacles.)</p>
+<p>(3) There’ s one more example, the prediction of river flooding. Specifically, it use the previous data of flooding events, including <strong>meteorological data, hydrological data, topography and soil type</strong>, as training data, to train a model that can predict whether there will be a flooding in the river. In this case, the predictors are the features (bold font listed above) of the rivers to be predicted, while the response is whether there will be flooding. Obviously, the goal of this application is prediction.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="2" type="a">
+<li>Describe three real-life applications in which regression might be useful. Describe the response, as well as the predictors. Is the goal of each application inference or prediction? Explain your answer.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>(1) One example of regression in real-life is the prediction of stock price. In this problem, the predictors are the macroeconomic factors (for example, interest rates and inflation rates), while the response is the prediction of the stock price. For this kind of regression application, the goal is prediction.</p>
+<p>(2) Another example is the application of house price forecast. In this problem, the predictors can be the characteristics of the house and facility and the response is the prediction of the house price. For this kind of regression, the goal is prediction.</p>
+<p>(3) There’ s one more example, the prediction of products sales. In this case, the predictors includes the product characteristics (brand, pricing) and market competitive trends, while the response is the prediction of product sales. Obviously, the goal of this application is prediction.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="3" type="a">
+<li>Describe three real-life applications in which cluster analysis might be useful.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>(1) One example of cluster analysis in real-life is to segment patients. In healthcare, we can use cluster analysis to segment paitients based on various health-related features such as medical history, vital signs, and lifestyle factors.</p>
+<p>(2) Another example is the application of grouping online-shoping customers. In this problem, online shopping platform can understand its customer based on their purchase history, browsing behavior, and demographic information by applying cluster analysis.</p>
+<p>(3) There’ s one more example, the educational course recommendation. The online education platform can recommend courses to users based on their learning preferences and behavior. Cluster analysis is used to group users with similar learning patterns.</p>
+</font><p><font color="Blue"></font></p>
+</section>
+<section id="isl-exercise-2.4.10-30pts" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="isl-exercise-2.4.10-30pts"><span class="header-section-number">4</span> ISL Exercise 2.4.10 (30pts)</h2>
+<p>This exercise involves the Boston housing data set.</p>
+<ol type="a">
+<li><p>To begin, load in the Boston data set. The Boston data set is part of the ISLR2 library.</p>
+<p>&gt; library(ISLR2)</p>
+<p>Now the data set is contained in the object Boston.</p>
+<p>&gt; Boston</p>
+<p>Read about the data set:</p>
+<p>&gt; ?Boston</p>
+<p>How many rows are in this data set? How many columns? What do the rows and columns represent?</p></li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>we can load the Boston data as follows:</p>
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Boston <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/ucla-biostat-212a/2024winter/master/slides/data/Boston.csv"</span>, <span class="at">col_select =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 506 × 13
+      crim    zn indus  chas   nox    rm   age   dis   rad   tax ptratio lstat
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1 0.00632  18    2.31     0 0.538  6.58  65.2  4.09     1   296    15.3  4.98
+ 2 0.0273    0    7.07     0 0.469  6.42  78.9  4.97     2   242    17.8  9.14
+ 3 0.0273    0    7.07     0 0.469  7.18  61.1  4.97     2   242    17.8  4.03
+ 4 0.0324    0    2.18     0 0.458  7.00  45.8  6.06     3   222    18.7  2.94
+ 5 0.0690    0    2.18     0 0.458  7.15  54.2  6.06     3   222    18.7  5.33
+ 6 0.0298    0    2.18     0 0.458  6.43  58.7  6.06     3   222    18.7  5.21
+ 7 0.0883   12.5  7.87     0 0.524  6.01  66.6  5.56     5   311    15.2 12.4 
+ 8 0.145    12.5  7.87     0 0.524  6.17  96.1  5.95     5   311    15.2 19.2 
+ 9 0.211    12.5  7.87     0 0.524  5.63 100    6.08     5   311    15.2 29.9 
+10 0.170    12.5  7.87     0 0.524  6.00  85.9  6.59     5   311    15.2 17.1 
+    medv
+   &lt;dbl&gt;
+ 1  24  
+ 2  21.6
+ 3  34.7
+ 4  33.4
+ 5  36.2
+ 6  28.7
+ 7  22.9
+ 8  27.1
+ 9  16.5
+10  18.9
+# ℹ 496 more rows</code></pre>
+</div>
+</div>
+<p>As we can see, there are 506 rows and 13 columns (14 columns if the first column of serial number included ). By using the <em>&gt;?Boston</em> command, we can know from the document that each row represents a suburbs of Boston and each column stands for a feature of the suburb. Specifically, each column is explained as follows:</p>
+<dl>
+<dt><code>crim</code></dt>
+<dd>
+<p>per capita crime rate by town.</p>
+</dd>
+<dt><code>zn</code></dt>
+<dd>
+<p>proportion of residential land zoned for lots over 25,000 sq.ft.</p>
+</dd>
+<dt><code>indus</code></dt>
+<dd>
+<p>proportion of non-retail business acres per town.</p>
+</dd>
+<dt><code>chas</code></dt>
+<dd>
+<p>Charles River dummy variable (= 1 if tract bounds river; 0 otherwise).</p>
+</dd>
+<dt><code>nox</code></dt>
+<dd>
+<p>nitrogen oxides concentration (parts per 10 million).</p>
+</dd>
+<dt><code>rm</code></dt>
+<dd>
+<p>average number of rooms per dwelling.</p>
+</dd>
+<dt><code>age</code></dt>
+<dd>
+<p>proportion of owner-occupied units built prior to 1940.</p>
+</dd>
+<dt><code>dis</code></dt>
+<dd>
+<p>weighted mean of distances to five Boston employment centres.</p>
+</dd>
+<dt><code>rad</code></dt>
+<dd>
+<p>index of accessibility to radial highways.</p>
+</dd>
+<dt><code>tax</code></dt>
+<dd>
+<p>full-value property-tax rate per $10,000.</p>
+</dd>
+<dt><code>ptratio</code></dt>
+<dd>
+<p>pupil-teacher ratio by town.</p>
+</dd>
+<dt><code>lstat</code></dt>
+<dd>
+<p>lower status of the population (percent).</p>
+</dd>
+<dt><code>medv</code></dt>
+<dd>
+<p>median value of owner-occupied homes in $1000s.</p>
+</dd>
+</dl>
+</font><p><font color="Blue"></font></p>
+<ol start="2" type="a">
+<li>Make some pairwise scatterplots of the predictors (columns) in this data set. Describe your findings.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>To draw pairwise scatterplots, we choose some of the columns as example:</p>
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> Boston[, <span class="fu">c</span>(<span class="st">"crim"</span>, <span class="st">"rm"</span>, <span class="st">"indus"</span>, <span class="st">"medv"</span>)], </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>), </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">"smooth"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Boston Data"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As is shown on the figure, the linear relationship between ‘rm’ and ‘medv’ is high, while the one between ‘rm’ and ‘crim’ is low.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="3" type="a">
+<li>Are any of the predictors associated with per capita crime rate? If so, explain the relationship.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>Yes, to find out which of them are associated with per capita crime rate, we can calculate the correlation coefficients between ‘crim’ and other predictors.</p>
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>columns <span class="ot">&lt;-</span> <span class="fu">names</span>(Boston)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>correlation <span class="ot">&lt;-</span> <span class="fu">cor</span>(Boston[, <span class="st">"crim"</span>], Boston[, columns[columns<span class="sc">!=</span><span class="st">"crim"</span>]])</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(correlation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             zn     indus        chas       nox         rm       age        dis
+crim -0.2004692 0.4065834 -0.05589158 0.4209717 -0.2192467 0.3527343 -0.3796701
+           rad       tax   ptratio     lstat       medv
+crim 0.6255051 0.5827643 0.2899456 0.4556215 -0.3883046</code></pre>
+</div>
+</div>
+<p>From the results, we can see that ‘rad’(index of accessibility to radial highways), ‘tax’ (full-value property-tax rate per $10,000), ‘lstat’ (lower status of the population), ‘nox’ (nitrogen oxides concentration) and ‘indus’ (proportion of non-retail business acres per town) may associated with per capita crime rate.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="4" type="a">
+<li>Do any of the census tracts of Boston appear to have particularly high crime rates? Tax rates? Pupil-teacher ratios? Comment on the range of each predictor.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(Boston<span class="sc">$</span>crim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  0.00632 88.97620</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(Boston[Boston<span class="sc">$</span>crim<span class="sc">&gt;</span><span class="dv">60</span>,])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+</div>
+<p>We can see the crime rates range from 0.00632% to 88.97620%, if we set higher than 60% as particularly high, there are 3 observations.</p>
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(Boston<span class="sc">$</span>tax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 187 711</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(Boston[Boston<span class="sc">$</span>tax<span class="sc">&gt;</span><span class="dv">670</span>,])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+</div>
+<p>We can see the tax rates range from 187 to 711, if we set higher than 670 as particularly high, there are 5 observations.</p>
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(Boston<span class="sc">$</span>ptratio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12.6 22.0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(Boston[Boston<span class="sc">$</span>ptratio<span class="sc">&gt;</span><span class="dv">21</span>,])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 18</code></pre>
+</div>
+</div>
+<p>We can see the pupil-teacher ratios range from 12.6 to 22.0, if we set higher than 21 as particularly high, there are 18 observations.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="5" type="a">
+<li>How many of the census tracts in this data set bound the Charles river?</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(Boston[Boston<span class="sc">$</span>chas<span class="sc">==</span><span class="dv">1</span>,])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 35</code></pre>
+</div>
+</div>
+<p>There are 35 observations bound Charles River.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="6" type="a">
+<li>What is the median pupil-teacher ratio among the towns in this data set?</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(Boston<span class="sc">$</span>ptratio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 19.05</code></pre>
+</div>
+</div>
+<p>the median pupil-teacher ratio among the towns in this data set is 19.05.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="7" type="a">
+<li>Which census tract of Boston has lowest median value of owner- occupied homes? What are the values of the other predictors for that census tract, and how do those values compare to the overall ranges for those predictors? Comment on your findings.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(Boston<span class="sc">$</span>medv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Boston[Boston<span class="sc">$</span>medv<span class="sc">==</span><span class="fu">min</span>(Boston<span class="sc">$</span>medv),])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 13
+   crim    zn indus  chas   nox    rm   age   dis   rad   tax ptratio lstat
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+1  38.4     0  18.1     0 0.693  5.45   100  1.49    24   666    20.2  30.6
+2  67.9     0  18.1     0 0.693  5.68   100  1.43    24   666    20.2  23.0
+# ℹ 1 more variable: medv &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>The two with median value of owner- occupied homes =5 (1000$) are the lowest, the value of other predictors of the two tracts are listed above. We can find that many other predictors in those two tracts are relatively high, such as tax rates, pupil-teacher ratio, proportion of owner-occupied units built prior to 1940, and so on, which reveals the poverty of these two tracts.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="8" type="a">
+<li>In this data set, how many of the census tracts average more than seven rooms per dwelling? More than eight rooms per dwelling? Comment on the census tracts that average more than eight rooms per dwelling.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(Boston[Boston<span class="sc">$</span>rm<span class="sc">&gt;</span><span class="dv">7</span>,])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 64</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(Boston[Boston<span class="sc">$</span>rm<span class="sc">&gt;</span><span class="dv">8</span>,])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 13</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>plus8 <span class="ot">&lt;-</span> Boston[Boston<span class="sc">$</span>rm<span class="sc">&gt;</span><span class="dv">8</span>,]</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(plus8)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      crim               zn            indus             chas       
+ Min.   :0.02009   Min.   : 0.00   Min.   : 2.680   Min.   :0.0000  
+ 1st Qu.:0.33147   1st Qu.: 0.00   1st Qu.: 3.970   1st Qu.:0.0000  
+ Median :0.52014   Median : 0.00   Median : 6.200   Median :0.0000  
+ Mean   :0.71879   Mean   :13.62   Mean   : 7.078   Mean   :0.1538  
+ 3rd Qu.:0.57834   3rd Qu.:20.00   3rd Qu.: 6.200   3rd Qu.:0.0000  
+ Max.   :3.47428   Max.   :95.00   Max.   :19.580   Max.   :1.0000  
+      nox               rm             age             dis       
+ Min.   :0.4161   Min.   :8.034   Min.   : 8.40   Min.   :1.801  
+ 1st Qu.:0.5040   1st Qu.:8.247   1st Qu.:70.40   1st Qu.:2.288  
+ Median :0.5070   Median :8.297   Median :78.30   Median :2.894  
+ Mean   :0.5392   Mean   :8.349   Mean   :71.54   Mean   :3.430  
+ 3rd Qu.:0.6050   3rd Qu.:8.398   3rd Qu.:86.50   3rd Qu.:3.652  
+ Max.   :0.7180   Max.   :8.780   Max.   :93.90   Max.   :8.907  
+      rad              tax           ptratio          lstat           medv     
+ Min.   : 2.000   Min.   :224.0   Min.   :13.00   Min.   :2.47   Min.   :21.9  
+ 1st Qu.: 5.000   1st Qu.:264.0   1st Qu.:14.70   1st Qu.:3.32   1st Qu.:41.7  
+ Median : 7.000   Median :307.0   Median :17.40   Median :4.14   Median :48.3  
+ Mean   : 7.462   Mean   :325.1   Mean   :16.36   Mean   :4.31   Mean   :44.2  
+ 3rd Qu.: 8.000   3rd Qu.:307.0   3rd Qu.:17.40   3rd Qu.:5.12   3rd Qu.:50.0  
+ Max.   :24.000   Max.   :666.0   Max.   :20.20   Max.   :7.44   Max.   :50.0  </code></pre>
+</div>
+</div>
+<p>From the results, we can see that there are 64 tracts average more than seven rooms per dwelling, and 13 more than eight rooms per dwelling.</p>
+<p>Extract the 13 tracts, and do summary on it, we can see that they have low crime rates, low tax rates(for at least 75% of them) and low ptratio (for at least 75% of them).</p>
+</font><p><font color="Blue"></font></p>
+</section>
+<section id="isl-exercise-3.7.3-12pts" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="isl-exercise-3.7.3-12pts"><span class="header-section-number">5</span> ISL Exercise 3.7.3 (12pts)</h2>
+<p>Suppose we have a data set with five predictors, <span class="math inline">\(X_1\)</span> = GPA, <span class="math inline">\(X_2\)</span> = IQ, <span class="math inline">\(X_3\)</span> = Level (1 for College and 0 for High School), <span class="math inline">\(X_4\)</span> = Interaction between GPA and IQ, and <span class="math inline">\(X_5\)</span> = Interaction between GPA and Level. The response is starting salary after graduation (in thousands of dollars). Suppose we use least squares to fit the model, and get <span class="math inline">\(\hat β_0\)</span> = 50,<span class="math inline">\(\hat β_1\)</span> = 20, <span class="math inline">\(\hat β_2\)</span> = 0.07,<span class="math inline">\(\hat β_3\)</span> = 35,<span class="math inline">\(\hat β_4\)</span> = 0.01,<span class="math inline">\(\hat β_5\)</span> = −10.</p>
+<p>(a) Which answer is correct, and why?</p>
+<p>i. For a fixed value of IQ and GPA, high school graduates earn more, on average, than college graduates.</p>
+<p>ii. For a fixed value of IQ and GPA, college graduates earn more, on average, than high school graduates.</p>
+<p>iii. For a fixed value of IQ and GPA, high school graduates earn more, on average, than college graduates provided that the GPA is high enough.</p>
+<p>iv. For a fixed value of IQ and GPA, college graduates earn more, on average, than high school graduates provided that the GPA is high enough.</p>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>The formula of can be written as follow:</p>
+<p><span class="math display">\[
+Y=\hat β_0+\hat β_1 \cdot X_1+\hat β_2 \cdot X_2+\hat β_3 \cdot X_3+\hat β_4 \cdot X_4+\hat β_5 \cdot X_5.
+\]</span> Set <span class="math inline">\(Y_1\)</span> as the high school graduates salary, and <span class="math inline">\(Y_2\)</span> as the college graduates salary, substitute <span class="math inline">\(\hat β_i\)</span> and <span class="math inline">\(X_3\)</span> into the formula. For fixed value of IQ and GPA we can have:</p>
+<p><span class="math display">\[
+Y_2-Y_1=\hat β_3 +\hat β_5 \cdot X_1=35-10X_1.
+\]</span></p>
+<p>Apparently when <span class="math inline">\(X_1\)</span> is high enough, <span class="math inline">\(Y_2-Y_1\)</span> will less than 0.</p>
+<p>So, iii. For a fixed value of IQ and GPA, high school graduates earn more, on average, than college graduates provided that the GPA is high enough is correct.</p>
+</font><p><font color="Blue"></font></p>
+<p>(b) Predict the salary of a college graduate with IQ of 110 and a GPA of 4.0.</p>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>Simply substitute the values into the formula in (a), we can have the response of 129.4, so the predicted salary is 129.4 (in thousands of dollars).</p>
+</font><p><font color="Blue"></font></p>
+<p>(c) True or false: Since the coefficient for the GPA/IQ interaction term is very small, there is very little evidence of an interaction effect. Justify your answer.</p>
+<p><font color="Blue"><br>
+The statment is false. The size of the coefficient alone does not determine the evidence of an interaction effect. The significance of the interaction effect should be obtained from the p-value of the coefficient of the GPA/IQ interaction.</font></p><font color="Blue">
+<p>If the p-value is small (generally smaller than 0.05), it suggests that the coefficient is significantly different from zero, proves the interaction effect, vice versa.</p>
+</font><p><font color="Blue"></font></p>
+</section>
+<section id="isl-exercise-3.7.15-20pts" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="isl-exercise-3.7.15-20pts"><span class="header-section-number">6</span> ISL Exercise 3.7.15 (20pts)</h2>
+<p>This problem involves the Boston data set, which we saw in the lab for this chapter. We will now try to predict per capita crime rate using the other variables in this data set. In other words, per capita crime rate is the response, and the other variables are the predictors.</p>
+<ol type="a">
+<li>For each predictor, fit a simple linear regression model to predict the response. Describe your results. In which of the models is there a statistically significant association between the predictor and the response? Create some plots to back up your assertions.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>Boston <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/ucla-biostat-212a/2024winter/master/slides/data/Boston.csv"</span>, <span class="at">col_select =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> <span class="fu">names</span>(Boston)[<span class="fu">names</span>(Boston) <span class="sc">!=</span> <span class="st">'crim'</span>]</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>simple_models <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (predictor <span class="cf">in</span> predictors) {</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  formula <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">paste</span>(<span class="st">'crim'</span>, <span class="st">"~"</span>, predictor))</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">lm</span>(formula, <span class="at">data =</span> Boston)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  simple_models[[predictor]] <span class="ot">&lt;-</span> model</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(simple_models)) {</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  predictor_name <span class="ot">&lt;-</span> <span class="fu">names</span>(simple_models)[i]</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Regression Equation for"</span>, predictor_name, <span class="st">":</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">summary</span>(simple_models[[i]]))</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Regression Equation for zn :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-4.429 -4.222 -2.620  1.250 84.523 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  4.45369    0.41722  10.675  &lt; 2e-16 ***
+zn          -0.07393    0.01609  -4.594 5.51e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.435 on 504 degrees of freedom
+Multiple R-squared:  0.04019,   Adjusted R-squared:  0.03828 
+F-statistic:  21.1 on 1 and 504 DF,  p-value: 5.506e-06
+
+
+Regression Equation for indus :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-11.972  -2.698  -0.736   0.712  81.813 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -2.06374    0.66723  -3.093  0.00209 ** 
+indus        0.50978    0.05102   9.991  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.866 on 504 degrees of freedom
+Multiple R-squared:  0.1653,    Adjusted R-squared:  0.1637 
+F-statistic: 99.82 on 1 and 504 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for chas :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.738 -3.661 -3.435  0.018 85.232 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   3.7444     0.3961   9.453   &lt;2e-16 ***
+chas         -1.8928     1.5061  -1.257    0.209    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.597 on 504 degrees of freedom
+Multiple R-squared:  0.003124,  Adjusted R-squared:  0.001146 
+F-statistic: 1.579 on 1 and 504 DF,  p-value: 0.2094
+
+
+Regression Equation for nox :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-12.371  -2.738  -0.974   0.559  81.728 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  -13.720      1.699  -8.073 5.08e-15 ***
+nox           31.249      2.999  10.419  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.81 on 504 degrees of freedom
+Multiple R-squared:  0.1772,    Adjusted R-squared:  0.1756 
+F-statistic: 108.6 on 1 and 504 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for rm :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-6.604 -3.952 -2.654  0.989 87.197 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   20.482      3.365   6.088 2.27e-09 ***
+rm            -2.684      0.532  -5.045 6.35e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.401 on 504 degrees of freedom
+Multiple R-squared:  0.04807,   Adjusted R-squared:  0.04618 
+F-statistic: 25.45 on 1 and 504 DF,  p-value: 6.347e-07
+
+
+Regression Equation for age :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-6.789 -4.257 -1.230  1.527 82.849 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.77791    0.94398  -4.002 7.22e-05 ***
+age          0.10779    0.01274   8.463 2.85e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.057 on 504 degrees of freedom
+Multiple R-squared:  0.1244,    Adjusted R-squared:  0.1227 
+F-statistic: 71.62 on 1 and 504 DF,  p-value: 2.855e-16
+
+
+Regression Equation for dis :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-6.708 -4.134 -1.527  1.516 81.674 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   9.4993     0.7304  13.006   &lt;2e-16 ***
+dis          -1.5509     0.1683  -9.213   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.965 on 504 degrees of freedom
+Multiple R-squared:  0.1441,    Adjusted R-squared:  0.1425 
+F-statistic: 84.89 on 1 and 504 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for rad :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-10.164  -1.381  -0.141   0.660  76.433 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -2.28716    0.44348  -5.157 3.61e-07 ***
+rad          0.61791    0.03433  17.998  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.718 on 504 degrees of freedom
+Multiple R-squared:  0.3913,    Adjusted R-squared:   0.39 
+F-statistic: 323.9 on 1 and 504 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for tax :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-12.513  -2.738  -0.194   1.065  77.696 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -8.528369   0.815809  -10.45   &lt;2e-16 ***
+tax          0.029742   0.001847   16.10   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.997 on 504 degrees of freedom
+Multiple R-squared:  0.3396,    Adjusted R-squared:  0.3383 
+F-statistic: 259.2 on 1 and 504 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for ptratio :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-7.654 -3.985 -1.912  1.825 83.353 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -17.6469     3.1473  -5.607 3.40e-08 ***
+ptratio       1.1520     0.1694   6.801 2.94e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.24 on 504 degrees of freedom
+Multiple R-squared:  0.08407,   Adjusted R-squared:  0.08225 
+F-statistic: 46.26 on 1 and 504 DF,  p-value: 2.943e-11
+
+
+Regression Equation for lstat :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-13.925  -2.822  -0.664   1.079  82.862 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.33054    0.69376  -4.801 2.09e-06 ***
+lstat        0.54880    0.04776  11.491  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.664 on 504 degrees of freedom
+Multiple R-squared:  0.2076,    Adjusted R-squared:  0.206 
+F-statistic:   132 on 1 and 504 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for medv :
+
+Call:
+lm(formula = formula, data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-9.071 -4.022 -2.343  1.298 80.957 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 11.79654    0.93419   12.63   &lt;2e-16 ***
+medv        -0.36316    0.03839   -9.46   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.934 on 504 degrees of freedom
+Multiple R-squared:  0.1508,    Adjusted R-squared:  0.1491 
+F-statistic: 89.49 on 1 and 504 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>As we can see from the results, only the ‘chas’ isn’t statistically significant associated with ‘crim’, since it has high p-value.</p>
+<p>To support my conclusion, we draw some plots as examples.</p>
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Boston, <span class="fu">aes</span>(<span class="at">x =</span> nox, <span class="at">y =</span> crim)) <span class="sc">+</span>  </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coefficients</span>(simple_models[[<span class="dv">4</span>]])[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coefficients</span>(simple_models[[<span class="dv">4</span>]])[<span class="dv">2</span>], <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"nox"</span>) <span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"crim"</span>) <span class="sc">+</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>),</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Boston, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> crim)) <span class="sc">+</span>  </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coefficients</span>(simple_models[[<span class="dv">6</span>]])[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coefficients</span>(simple_models[[<span class="dv">6</span>]])[<span class="dv">2</span>], <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"age"</span>) <span class="sc">+</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"crim"</span>) <span class="sc">+</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>),</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Boston, <span class="fu">aes</span>(<span class="at">x =</span> medv, <span class="at">y =</span> crim)) <span class="sc">+</span>  </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coefficients</span>(simple_models[[<span class="dv">12</span>]])[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coefficients</span>(simple_models[[<span class="dv">12</span>]])[<span class="dv">2</span>], <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span> </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"medv"</span>) <span class="sc">+</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"crim"</span>) <span class="sc">+</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>),</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-13-3.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Boston, <span class="fu">aes</span>(<span class="at">x =</span> ptratio, <span class="at">y =</span> crim)) <span class="sc">+</span>  </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coefficients</span>(simple_models[[<span class="dv">8</span>]])[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coefficients</span>(simple_models[[<span class="dv">8</span>]])[<span class="dv">2</span>], <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span> </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"ptratio"</span>) <span class="sc">+</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"crim"</span>) <span class="sc">+</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>),</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-13-4.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</font><p><font color="Blue"></font></p>
+<ol start="2" type="a">
+<li>Fit a multiple regression model to predict the response using all of the predictors. Describe your results. For which predictors can we reject the null hypothesis <span class="math inline">\(H_0:\beta_j=0\)</span>?</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>multiple_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim <span class="sc">~</span> ., <span class="at">data =</span> Boston)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(multiple_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = crim ~ ., data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.534 -2.248 -0.348  1.087 73.923 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 13.7783938  7.0818258   1.946 0.052271 .  
+zn           0.0457100  0.0187903   2.433 0.015344 *  
+indus       -0.0583501  0.0836351  -0.698 0.485709    
+chas        -0.8253776  1.1833963  -0.697 0.485841    
+nox         -9.9575865  5.2898242  -1.882 0.060370 .  
+rm           0.6289107  0.6070924   1.036 0.300738    
+age         -0.0008483  0.0179482  -0.047 0.962323    
+dis         -1.0122467  0.2824676  -3.584 0.000373 ***
+rad          0.6124653  0.0875358   6.997 8.59e-12 ***
+tax         -0.0037756  0.0051723  -0.730 0.465757    
+ptratio     -0.3040728  0.1863598  -1.632 0.103393    
+lstat        0.1388006  0.0757213   1.833 0.067398 .  
+medv        -0.2200564  0.0598240  -3.678 0.000261 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.46 on 493 degrees of freedom
+Multiple R-squared:  0.4493,    Adjusted R-squared:  0.4359 
+F-statistic: 33.52 on 12 and 493 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>The model provides insights into the relationship between various predictors and the crime rate in the Boston dataset. Predictors like weighted mean of distances to five Boston employment centres (dis), index of accessibility to radial highways (rad), median value of owner-occupied homes in $1000s (medv) appear to play significant roles in influencing the crime rate. The overall model is statistically significant and explains a substantial portion of the variance in the crime rate.</p>
+<p>If we use <span class="math inline">\(\alpha=0.05\)</span> ,then ‘zn’, ‘dis’, ‘rad’, ‘medv’ can reject the null hypothesis <span class="math inline">\(H_0:\beta_j=0\)</span>.</p>
+</font><p><font color="Blue"></font></p>
+<ol start="3" type="a">
+<li>How do your results from (a) compare to your results from (b)? Create a plot displaying the univariate regression coefficients from (a) on the x-axis, and the multiple regression coefficients from (b) on the y-axis. That is, each predictor is displayed as a single point in the plot. Its coefficient in a simple linear regres- sion model is shown on the x-axis, and its coefficient estimate in the multiple linear regression model is shown on the y-axis.</li>
+</ol>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>I think the one from (b) is much more better and reliable. Since the results from (a) show that almost every predictors are statistically significant associated with ‘crim’.</p>
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>a_values<span class="ot">&lt;-</span><span class="fu">vector</span>()</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>b_values<span class="ot">&lt;-</span><span class="fu">vector</span>()</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>)) {</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  a_values[i]<span class="ot">&lt;-</span>simple_models[[i]]<span class="sc">$</span>coefficients[<span class="dv">2</span>]</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  b_values[i]<span class="ot">&lt;-</span>multiple_model<span class="sc">$</span>coefficients[i<span class="sc">+</span><span class="dv">1</span>]</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>zeroes<span class="ot">&lt;-</span><span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">12</span>)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(a_values,b_values,<span class="at">pch=</span><span class="dv">16</span>,<span class="at">col=</span><span class="st">"blue"</span>,<span class="at">cex=</span><span class="fl">0.5</span>,<span class="at">xlab=</span><span class="st">"coefficients in (a)"</span>, <span class="at">ylab=</span><span class="st">"coefficients in (b)"</span> ,<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">10</span>,<span class="dv">2</span>))</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(a_values,b_values,<span class="at">labels=</span><span class="fu">names</span>(Boston)[<span class="dv">2</span><span class="sc">:</span><span class="dv">13</span>],<span class="at">pos=</span><span class="dv">3</span>,<span class="at">col=</span><span class="st">"red"</span>,<span class="at">cex=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</font><p><font color="Blue"></font></p>
+<ol start="4" type="a">
+<li>Is there evidence of non-linear association between any of the predictors and the response? To answer this question, for each predictor X, fit a model of the form</li>
+</ol>
+<p><span class="math display">\[
+    Y=\hat β_0+\hat β_1 \cdot X_1+\hat β_2 \cdot X_2^2+\hat β_3 \cdot X_3^3.
+\]</span></p>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>To create functions that follow the given form, we shall apply the poly() in lm().</p>
+<div class="cell" data-layout-align="center" data-evalue="false">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> <span class="fu">names</span>(Boston)[<span class="fu">names</span>(Boston) <span class="sc">!=</span> <span class="st">'crim'</span>]</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>nonlinear_models <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># poly function will have inevitable bug in loop, so I didn't apply loops</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>zn,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>indus,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>nox,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>rm,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">4</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>age,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">5</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>dis,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">6</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>rad,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">7</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>tax,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">8</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>ptratio,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">9</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>lstat,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">10</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(crim<span class="sc">~</span><span class="fu">poly</span>(Boston<span class="sc">$</span>medv,<span class="dv">3</span>), <span class="at">data =</span> Boston)</span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a>nonlinear_models[[<span class="dv">11</span>]] <span class="ot">&lt;-</span> model</span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(nonlinear_models)) {</span>
+<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a>  predictor_name <span class="ot">&lt;-</span> <span class="fu">names</span>(nonlinear_models)[i]</span>
+<span id="cb41-31"><a href="#cb41-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Regression Equation for"</span>, predictor_name, <span class="st">":</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb41-32"><a href="#cb41-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">summary</span>(nonlinear_models[[i]]))</span>
+<span id="cb41-33"><a href="#cb41-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb41-34"><a href="#cb41-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$zn, 3), data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-4.821 -4.614 -1.294  0.473 84.130 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           3.6135     0.3722   9.709  &lt; 2e-16 ***
+poly(Boston$zn, 3)1 -38.7498     8.3722  -4.628  4.7e-06 ***
+poly(Boston$zn, 3)2  23.9398     8.3722   2.859  0.00442 ** 
+poly(Boston$zn, 3)3 -10.0719     8.3722  -1.203  0.22954    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.372 on 502 degrees of freedom
+Multiple R-squared:  0.05824,   Adjusted R-squared:  0.05261 
+F-statistic: 10.35 on 3 and 502 DF,  p-value: 1.281e-06
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$indus, 3), data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.278 -2.514  0.054  0.764 79.713 
+
+Coefficients:
+                       Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)               3.614      0.330  10.950  &lt; 2e-16 ***
+poly(Boston$indus, 3)1   78.591      7.423  10.587  &lt; 2e-16 ***
+poly(Boston$indus, 3)2  -24.395      7.423  -3.286  0.00109 ** 
+poly(Boston$indus, 3)3  -54.130      7.423  -7.292  1.2e-12 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.423 on 502 degrees of freedom
+Multiple R-squared:  0.2597,    Adjusted R-squared:  0.2552 
+F-statistic: 58.69 on 3 and 502 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$nox, 3), data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-9.110 -2.068 -0.255  0.739 78.302 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)            3.6135     0.3216  11.237  &lt; 2e-16 ***
+poly(Boston$nox, 3)1  81.3720     7.2336  11.249  &lt; 2e-16 ***
+poly(Boston$nox, 3)2 -28.8286     7.2336  -3.985 7.74e-05 ***
+poly(Boston$nox, 3)3 -60.3619     7.2336  -8.345 6.96e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.234 on 502 degrees of freedom
+Multiple R-squared:  0.297, Adjusted R-squared:  0.2928 
+F-statistic: 70.69 on 3 and 502 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$rm, 3), data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-18.485  -3.468  -2.221  -0.015  87.219 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           3.6135     0.3703   9.758  &lt; 2e-16 ***
+poly(Boston$rm, 3)1 -42.3794     8.3297  -5.088 5.13e-07 ***
+poly(Boston$rm, 3)2  26.5768     8.3297   3.191  0.00151 ** 
+poly(Boston$rm, 3)3  -5.5103     8.3297  -0.662  0.50858    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.33 on 502 degrees of freedom
+Multiple R-squared:  0.06779,   Adjusted R-squared:  0.06222 
+F-statistic: 12.17 on 3 and 502 DF,  p-value: 1.067e-07
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$age, 3), data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-9.762 -2.673 -0.516  0.019 82.842 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)            3.6135     0.3485  10.368  &lt; 2e-16 ***
+poly(Boston$age, 3)1  68.1820     7.8397   8.697  &lt; 2e-16 ***
+poly(Boston$age, 3)2  37.4845     7.8397   4.781 2.29e-06 ***
+poly(Boston$age, 3)3  21.3532     7.8397   2.724  0.00668 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.84 on 502 degrees of freedom
+Multiple R-squared:  0.1742,    Adjusted R-squared:  0.1693 
+F-statistic: 35.31 on 3 and 502 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$dis, 3), data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-10.757  -2.588   0.031   1.267  76.378 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)            3.6135     0.3259  11.087  &lt; 2e-16 ***
+poly(Boston$dis, 3)1 -73.3886     7.3315 -10.010  &lt; 2e-16 ***
+poly(Boston$dis, 3)2  56.3730     7.3315   7.689 7.87e-14 ***
+poly(Boston$dis, 3)3 -42.6219     7.3315  -5.814 1.09e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.331 on 502 degrees of freedom
+Multiple R-squared:  0.2778,    Adjusted R-squared:  0.2735 
+F-statistic: 64.37 on 3 and 502 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$rad, 3), data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-10.381  -0.412  -0.269   0.179  76.217 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)            3.6135     0.2971  12.164  &lt; 2e-16 ***
+poly(Boston$rad, 3)1 120.9074     6.6824  18.093  &lt; 2e-16 ***
+poly(Boston$rad, 3)2  17.4923     6.6824   2.618  0.00912 ** 
+poly(Boston$rad, 3)3   4.6985     6.6824   0.703  0.48231    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.682 on 502 degrees of freedom
+Multiple R-squared:    0.4, Adjusted R-squared:  0.3965 
+F-statistic: 111.6 on 3 and 502 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$tax, 3), data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-13.273  -1.389   0.046   0.536  76.950 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)            3.6135     0.3047  11.860  &lt; 2e-16 ***
+poly(Boston$tax, 3)1 112.6458     6.8537  16.436  &lt; 2e-16 ***
+poly(Boston$tax, 3)2  32.0873     6.8537   4.682 3.67e-06 ***
+poly(Boston$tax, 3)3  -7.9968     6.8537  -1.167    0.244    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.854 on 502 degrees of freedom
+Multiple R-squared:  0.3689,    Adjusted R-squared:  0.3651 
+F-statistic:  97.8 on 3 and 502 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$ptratio, 3), data = Boston)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-6.833 -4.146 -1.655  1.408 82.697 
+
+Coefficients:
+                         Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                 3.614      0.361  10.008  &lt; 2e-16 ***
+poly(Boston$ptratio, 3)1   56.045      8.122   6.901 1.57e-11 ***
+poly(Boston$ptratio, 3)2   24.775      8.122   3.050  0.00241 ** 
+poly(Boston$ptratio, 3)3  -22.280      8.122  -2.743  0.00630 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.122 on 502 degrees of freedom
+Multiple R-squared:  0.1138,    Adjusted R-squared:  0.1085 
+F-statistic: 21.48 on 3 and 502 DF,  p-value: 4.171e-13
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$lstat, 3), data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-15.234  -2.151  -0.486   0.066  83.353 
+
+Coefficients:
+                       Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              3.6135     0.3392  10.654   &lt;2e-16 ***
+poly(Boston$lstat, 3)1  88.0697     7.6294  11.543   &lt;2e-16 ***
+poly(Boston$lstat, 3)2  15.8882     7.6294   2.082   0.0378 *  
+poly(Boston$lstat, 3)3 -11.5740     7.6294  -1.517   0.1299    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.629 on 502 degrees of freedom
+Multiple R-squared:  0.2179,    Adjusted R-squared:  0.2133 
+F-statistic: 46.63 on 3 and 502 DF,  p-value: &lt; 2.2e-16
+
+
+Regression Equation for :
+
+Call:
+lm(formula = crim ~ poly(Boston$medv, 3), data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-24.427  -1.976  -0.437   0.439  73.655 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              3.614      0.292  12.374  &lt; 2e-16 ***
+poly(Boston$medv, 3)1  -75.058      6.569 -11.426  &lt; 2e-16 ***
+poly(Boston$medv, 3)2   88.086      6.569  13.409  &lt; 2e-16 ***
+poly(Boston$medv, 3)3  -48.033      6.569  -7.312 1.05e-12 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.569 on 502 degrees of freedom
+Multiple R-squared:  0.4202,    Adjusted R-squared:  0.4167 
+F-statistic: 121.3 on 3 and 502 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>As we can see, many of them do show the statistically significant association in this cubic equation, for example, medv, lstats, ptratio, dis, …, which can be a support of the existence of non-linear association between some predictors and response.</p>
+</font><p><font color="Blue"></font></p>
+</section>
+<section id="bonus-question-20pts" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="bonus-question-20pts"><span class="header-section-number">7</span> Bonus question (20pts)</h2>
+<p>For multiple linear regression, show that <span class="math inline">\(R^2\)</span> is equal to the correlation between the response vector <span class="math inline">\(\mathbf{y} = (y_1, \ldots, y_n)^T\)</span> and the fitted values <span class="math inline">\(\hat{\mathbf{y}} = (\hat y_1, \ldots, \hat y_n)^T\)</span>. That is</p>
+<p><span class="math display">\[
+R^2 = 1 - \frac{\text{RSS}}{\text{TSS}} = [\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2.
+\]</span></p>
+<p><font color="Blue"></font></p><font color="Blue">
+<p>From the definition of <span class="math inline">\(R^2\)</span>, we already know that <span class="math inline">\(R^2 = 1 - \frac{\text{RSS}}{\text{TSS}}\)</span>, so now we shall try to use <span class="math inline">\(y\)</span> and <span class="math inline">\(\hat y\)</span> to express this equation.</p>
+<p>Still, from the definition we know that RSS (Residual Sum of Squares) and TSS (Total Sum of Squares) can be calculated as follows: <span class="math display">\[
+RSS=\sum_{i=1}^{n}(y_i-\hat y_i)^2
+\]</span></p>
+<p><span class="math display">\[
+TSS=\sum_{i=1}^{n}(y-\bar y)^2
+\]</span></p>
+<p>So,we have</p>
+<p><span class="math display">\[
+\begin {aligned}
+R^2 &amp;= 1 - \frac{\text{RSS}}{\text{TSS}}=\frac{\sum_{i=1}^{n}(y_i-\hat y_i)^2-\sum_{i=1}^{n}(y_i-\bar y_i)^2}{\sum_{i=1}^{n}(y_i-\bar y_i)^2}\\
+&amp;=\frac{\sum_{i=1}^{n}(\hat y_i-\bar y_i)^2}{\sum_{i=1}^{n}(y_i-\bar y_i)^2}
+\end {aligned}
+\]</span></p>
+<p>Now let’s come back to <span class="math inline">\([\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2\)</span>, since we have</p>
+<p><span class="math display">\[
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]=\frac{\sum_{i=1}^{n}(y_i-\bar y_i)(\hat y_i-\bar{\hat y_i})}{\sqrt{\sum_{i=1}^{n}(y_i-\bar y_i)^2\sum_{i=1}^{n}(\hat y_i-\bar{\hat y_i})^2}}.
+\]</span></p>
+<p>Finally, we have <span class="math inline">\([\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]\)</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;=\frac{\sum_{i=1}^{n}(y_i-\bar y_i)(\hat y_i-\bar{\hat y_i})}{\sqrt{\sum_{i=1}^{n}(y_i-\bar y_i)^2\sum_{i=1}^{n}(\hat y_i-\bar{\hat y_i})^2}}\\
+&amp;=\frac{\sum_{i=1}^{n}(y_i-\hat y+\hat y_i-\bar y_i)(\hat y_i-\bar{\hat y_i})}{\sqrt{\sum_{i=1}^{n}(y_i-\bar y_i)^2\sum_{i=1}^{n}(\hat y_i-\bar{\hat y_i})^2}}\\
+&amp;=\frac{\sum_{i=1}^{n}(y_i-\hat y)(\hat y_i-\bar y_i)+\sum_{i=1}^{n}(\hat y_i-\bar{\hat y_i})^2}{\sqrt{\sum_{i=1}^{n}(y_i-\bar y_i)^2\sum_{i=1}^{n}(\hat y_i-\bar{\hat y_i})^2}}\\
+&amp;=\frac{0+\sum_{i=1}^{n}(\hat y_i-\bar{\hat y_i})^2}{\sqrt{\sum_{i=1}^{n}(y_i-\bar y_i)^2\sum_{i=1}^{n}(\hat y_i-\bar{\hat y_i})^2}}\\
+\end {aligned},
+\]</span></p>
+<p>since we have <span class="math inline">\(\bar y=\bar {\hat y}\)</span>, we can simplify the equation as follows</p>
+<p><span class="math display">\[
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]=\sqrt{\frac{\sum_{i=1}^{n}(\hat y_i-\bar y_i)^2}{\sum_{i=1}^{n}(y_i-\bar y_i)^2}}=\sqrt {R^2}
+\]</span></p>
+<p>The question is proven.</p>
+</font><p><font color="Blue"></font></p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

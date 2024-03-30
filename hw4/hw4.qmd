@@ -1,0 +1,801 @@
+---
+title: "Biostat 212a Homework 4"
+subtitle: "Due Mar. 5, 2024 @ 11:59PM"
+author: "YOUR NAME and UID"
+date: today
+engine: knitr
+knitr:
+  opts_chunk: 
+    fig.align: 'center'
+    # fig.width: 6
+    # fig.height: 4
+    message: FALSE
+    cache: false
+---
+
+```{r}
+library(GGally)
+library(gtsummary)
+library(ranger)
+library(tidyverse)
+library(tidymodels)
+library(ISLR2)
+```
+
+## ISL Exercise 8.4.3 (10pts)
+
+Consider the Gini index, classification error, and entropy in a simple classification setting with two classes. Create a single plot that displays each of these quantities as a function of $\hat p_{m1}$. The x-axis should display $\hat p_{m1}$, ranging from 0 to 1, and the y-axis should display the value of the Gini index, classification error, and entropy.
+
+Hint: In a setting with two classes, $\hat p_{m1}$ = 1 − $\hat p_{m2}$. You could make this plot by hand, but it will be much easier to make in R.
+
+```{r,eval=T}
+library(ggplot2)
+
+# create a sequence for p1
+p_m1 <- seq(0, 1, length.out = 500)
+
+
+gini_index <- 1-(p_m1^2+(1-p_m1)^2)
+classification_error <- 1 - pmax(p_m1, 1 - p_m1)
+entropy <- - (p_m1 * log2(p_m1 + 1e-9) + (1 - p_m1) * log2(1 - p_m1 + 1e-9))# prevent log2(0)
+
+info_df<- data.frame(p_m1, gini_index, classification_error, entropy)
+
+# transpose based on p_m1
+info_melt <- reshape2::melt(info_df, id.vars = 'p_m1', variable.name="metric")
+
+
+ggplot(info_melt, aes(x = p_m1, y = value, color = metric)) +
+  geom_line() +
+  labs(x = expression(hat(p)[m1]), y = "Value", color = "Metric") +
+  scale_color_manual(values = c("gini_index" = "red", 
+                                "classification_error" = "blue", 
+                                "entropy" = "forestgreen")) +
+  ggtitle("Value of Gini Index, Classification Error, and Entropy")
+```
+
+## ISL Exercise 8.4.4 (10pts)
+
+This question relates to the plots in Figure 8.14.
+
+![](images/Screenshot%202024-03-01%20at%203.15.47%20PM.png)
+
+\(a\) Sketch the tree corresponding to the partition of the predictor space illustrated in the left-hand panel of Figure 8.14. The numbers inside the boxes indicate the mean of Y within each region.
+
+![](images/IMG_0618(20240305-100528).PNG)
+
+\(b\) Create a diagram similar to the left-hand panel of Figure 8.14, using the tree illustrated in the right-hand panel of the same figure. You should divide up the predictor space into the correct regions, and indicate the mean for each region.
+
+![](images/IMG_0619(20240305-132416).PNG)
+
+## ISL Exercise 8.4.5 (10pts)
+
+Suppose we produce ten bootstrapped samples from a data set containing red and green classes. We then apply a classification tree to each bootstrapped sample and, for a specific value of X, produce 10 estimates of $P(Class\ is\ Red|X)$:
+
+0.1, 0.15, 0.2, 0.2, 0.55, 0.6, 0.6, 0.65, 0.7, and 0.75.
+
+There are two common ways to combine these results together into a single class prediction. One is the majority vote approach discussed in this chapter. The second approach is to classify based on the average probability. In this example, what is the final classification under each of these two approaches?
+
+<font color="Blue">
+
+For the majority vote approach, we decide the classification results based on the count of $P(Class\ is\ Red|X)$\>0.5. From the 10 bootstrap samples, 6 vote for Red and 4 vote for Green, the final classification will be Red.
+
+For the average probability approach, the final classification is determined by the mean of the 10 probabilities. The mean is 0.45, so the final result will be Green.
+
+</font>
+
+## ISL Lab 8.3. `Boston` data set (30pts)
+
+Follow the machine learning workflow to train regression tree, random forest, and boosting methods for predicting `medv`. Evaluate out-of-sample performance on a test set.
+
+```{r,eval=T}
+# Numerical summaries stratified by the outcome `medv`.
+Boston %>% tbl_summary()
+```
+
+```{r,eval=T}
+# rm NAs
+Boston <- Boston %>% filter(!is.na(medv))
+```
+
+```{r,eval =T}
+# initial split into test and non-test sets
+
+# For reproducibility
+set.seed(20230920)
+
+data_split <- initial_split(
+  Boston, 
+  prop = 0.5
+  )
+data_split
+
+Boston_training <- training(data_split)
+Boston_testing <- testing(data_split)
+```
+
+<font color="Blue">
+
+**Regression Tree:**
+
+```{r,eval=T}
+# recipe
+tree_recipe <- 
+  recipe(
+    medv ~ ., 
+    data = Boston_training
+  ) %>%
+  # # create traditional dummy variables (not necessary for random forest in R)
+  # step_dummy(all_nominal()) %>%
+  step_naomit(medv) %>%
+  # zero-variance filter
+  step_zv(all_numeric_predictors()) %>% 
+  # # center and scale numeric data (not necessary for random forest)
+  # step_normalize(all_numeric_predictors()) %>%
+  # estimate the means and standard deviations
+  prep(training = Boston_training, retain = TRUE)
+tree_recipe
+```
+
+```{r,eval=T}
+regtree_mod <- decision_tree(
+  cost_complexity = tune(),
+  tree_depth = tune(),
+  min_n = 5,
+  mode = "regression",
+  engine = "rpart"
+  ) 
+tree_wf <- workflow() %>%
+  add_recipe(tree_recipe) %>%
+  add_model(regtree_mod)
+tree_wf
+
+tree_grid <- grid_regular(cost_complexity(),
+                          tree_depth(),
+                          levels = c(100, 5))
+
+
+set.seed(20230920)
+
+folds <- vfold_cv(Boston_training, v = 5)
+folds
+
+
+tree_fit <- tree_wf %>%
+  tune_grid(
+    resamples = folds,
+    grid = tree_grid,
+    metrics = metric_set(rmse, rsq)
+    )
+tree_fit
+
+
+tree_fit %>%
+  collect_metrics() %>%
+  print(width = Inf) %>%
+  filter(.metric == "rmse") %>%
+  mutate(tree_depth = as.factor(tree_depth)) %>%
+  ggplot(mapping = aes(x = cost_complexity, y = mean, color = tree_depth)) +
+  geom_point() + 
+  geom_line() + 
+  labs(x = "cost_complexity", y = "CV mse")
+
+
+tree_fit %>%
+  show_best("rmse")
+
+best_tree <- tree_fit %>%
+  select_best("rmse")
+best_tree
+```
+
+Apply the Test data:
+
+```{r,eval=T}
+
+# Final workflow
+final_wf <- tree_wf %>%
+  finalize_workflow(best_tree)
+final_wf
+
+# Fit the whole training set, then predict the test cases
+final_fit <- 
+  final_wf %>%
+  last_fit(data_split)
+final_fit
+
+# Test metrics
+final_fit %>% 
+  collect_metrics()
+
+
+```
+
+From the test metrics, we can see that the RMSE is 4.6516265, and the R-squared is 0.7539597.
+
+```{r,eval=T}
+library(rpart.plot)
+final_tree <- extract_workflow(final_fit)
+final_tree
+
+
+final_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+
+library(vip)
+
+final_tree %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+```
+
+**Random Forests:**
+
+```{r,eval=T}
+rf_recipe <- 
+  recipe(
+    medv ~ ., 
+    data = Boston_training
+  ) %>%
+  # # create traditional dummy variables (not necessary for random forest in R)
+  # step_dummy(all_nominal()) %>%
+  step_naomit(medv) %>%
+  # zero-variance filter
+  step_zv(all_numeric_predictors()) %>% 
+  # # center and scale numeric data (not necessary for random forest)
+  # step_normalize(all_numeric_predictors()) %>%
+  # estimate the means and standard deviations
+  prep(training = Boston_training, retain = TRUE)
+rf_recipe
+```
+
+```{r,eval=T}
+rf_mod <- 
+  rand_forest(
+    mode = "regression",
+    # Number of predictors randomly sampled in each split
+    mtry = tune(),
+    # Number of trees in ensemble
+    trees = tune()
+  ) %>% 
+  set_engine("ranger")
+rf_mod
+
+rf_wf <- workflow() %>%
+  add_recipe(rf_recipe) %>%
+  add_model(rf_mod)
+rf_wf
+
+param_grid <- grid_regular(
+  trees(range = c(100L, 300L)), 
+  mtry(range = c(1L, 5L)),
+  levels = c(3, 5)
+  )
+param_grid
+
+set.seed(20230920)
+
+folds <- vfold_cv(Boston_training, v = 5)
+folds
+
+
+rf_fit <- rf_wf %>%
+  tune_grid(
+    resamples = folds,
+    grid = param_grid,
+    metrics = metric_set(rmse, rsq)
+    )
+rf_fit
+
+
+rf_fit %>%
+  collect_metrics() %>%
+  print(width = Inf) %>%
+  filter(.metric == "rmse") %>%
+  mutate(mtry = as.factor(mtry)) %>%
+  ggplot(mapping = aes(x = trees, y = mean, color = mtry)) +
+  # geom_point() + 
+  geom_line() + 
+  labs(x = "Num. of Trees", y = "CV mse")
+
+rf_fit %>%
+  show_best("rmse")
+
+best_rf <- rf_fit %>%
+  select_best("rmse")
+best_rf
+```
+
+Apply the Test data:
+
+```{r,eval=T}
+# Final workflow
+final_wf <- rf_wf %>%
+  finalize_workflow(best_rf)
+final_wf
+
+# Fit the whole training set, then predict the test cases
+final_fit <- 
+  final_wf %>%
+  last_fit(data_split)
+final_fit
+
+
+# Test metrics
+final_fit %>% 
+  collect_metrics()
+```
+
+from the test metrics, we can see that the RMSE is 3.9514209, and the R-squared is 0.8235916.
+
+**Boosting**
+
+```{r,eval=T}
+gb_recipe <- 
+  recipe(
+    medv ~ ., 
+    data = Boston_training
+  ) %>%
+  # # create traditional dummy variables (not necessary for random forest in R)
+  # step_dummy(all_nominal()) %>%
+  step_naomit(medv) %>%
+  # zero-variance filter
+  step_zv(all_numeric_predictors()) %>% 
+  # # center and scale numeric data (not necessary for random forest)
+  # step_normalize(all_numeric_predictors()) %>%
+  # estimate the means and standard deviations
+  prep(training = Boston_training, retain = TRUE)
+gb_recipe
+```
+
+```{r,eval=T}
+gb_mod <- 
+  boost_tree(
+    mode = "regression",
+    trees = 1000, 
+    tree_depth = tune(),
+    learn_rate = tune()
+  ) %>% 
+  set_engine("xgboost")
+gb_mod
+
+gb_wf <- workflow() %>%
+  add_recipe(gb_recipe) %>%
+  add_model(gb_mod)
+gb_wf
+
+param_grid <- grid_regular(
+  tree_depth(range = c(1L, 4L)),
+  learn_rate(range = c(-3, -0.5), trans = log10_trans()),
+  levels = c(4, 10)
+  )
+param_grid
+
+
+set.seed(20230920)
+
+folds <- vfold_cv(Boston_training, v = 5)
+folds
+
+gb_fit <- gb_wf %>%
+  tune_grid(
+    resamples = folds,
+    grid = param_grid,
+    metrics = metric_set(rmse, rsq)
+    )
+gb_fit
+
+
+gb_fit %>%
+  collect_metrics() %>%
+  print(width = Inf) %>%
+  filter(.metric == "rmse") %>%
+  ggplot(mapping = aes(x = learn_rate, y = mean, color = factor(tree_depth))) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Learning Rate", y = "CV AUC") +
+  scale_x_log10()
+
+
+gb_fit %>%
+  show_best("rmse")
+
+
+best_gb <- gb_fit %>%
+  select_best("rmse")
+best_gb
+
+```
+
+Apply the Test data:
+
+```{r,eval=T}
+
+# Final workflow
+final_wf <- gb_wf %>%
+  finalize_workflow(best_gb)
+final_wf
+
+# Fit the whole training set, then predict the test cases
+final_fit <- 
+  final_wf %>%
+  last_fit(data_split)
+final_fit
+
+# Test metrics
+final_fit %>% 
+  collect_metrics()
+```
+
+From the test metrics, we can see that the RMSE is 4.0452030, and the R-squared is 0.8119971.
+
+```{r,eval=T}
+#library(rpart.plot)
+final_tree <- extract_workflow(final_fit)
+final_tree
+
+library(vip)
+
+final_tree %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+
+```
+
+Among the three models, the random forest model has the best performance, with the lowest RMSE and the highest R-squared, while the regression tree model has the worst performance. </font>
+
+## ISL Lab 8.3 `Carseats` data set (30pts)
+
+Follow the machine learning workflow to train classification tree, random forest, and boosting methods for classifying `Sales <= 8` versus `Sales > 8`. Evaluate out-of-sample performance on a test set.
+
+<font color="Blue">
+
+**Let's created a binary variable represents the numeric relationship between sales and 8.**
+
+```{r,eval=T}
+Carseats4classify<-Carseats
+Carseats4classify$Sales<-if_else(Carseats4classify$Sales>8,"No","Yes")
+Carseats4classify<-na.omit(Carseats4classify)
+Carseats4classify%>%tbl_summary() 
+```
+
+```{r,eval=T}
+# For reproducibility
+set.seed(20230920)
+
+data_split <- initial_split(
+  Carseats4classify, 
+  prop = 0.5,
+  strata = Sales
+  )
+data_split
+
+Carseats_training <- training(data_split)
+Carseats_testing <- testing(data_split)
+```
+
+**Classification Tree**
+
+```{r,eval=T}
+tree_recipe <- 
+  recipe(
+    Sales ~ ., 
+    data = Carseats_training
+  ) %>%
+  step_naomit(all_predictors()) %>%
+  # # create traditional dummy variables (not necessary for random forest in R)
+  step_dummy(all_nominal_predictors()) %>%
+  # zero-variance filter
+  step_zv(all_numeric_predictors()) %>% 
+  # # center and scale numeric data (not necessary for random forest)
+  step_normalize(all_numeric_predictors()) %>%
+  # estimate the means and standard deviations
+  prep(training = Carseats_training, retain = TRUE)
+tree_recipe
+```
+
+```{r,eval=T}
+classtree_mod <- decision_tree(
+  cost_complexity = tune(),
+  tree_depth = tune(),
+  min_n = 5,
+  mode = "classification",
+  engine = "rpart"
+  ) 
+
+tree_wf <- workflow() %>%
+  add_recipe(tree_recipe) %>%
+  add_model(classtree_mod) 
+tree_wf
+
+tree_grid <- grid_regular(cost_complexity(),
+                          tree_depth(),
+                          levels = c(100,5))
+
+
+set.seed(20230920)
+
+folds <- vfold_cv(Carseats_training, v = 5)
+folds
+
+
+tree_fit <- tree_wf %>%
+  tune_grid(
+    resamples = folds,
+    grid = tree_grid,
+    metrics = metric_set(accuracy, roc_auc)
+    )
+tree_fit
+
+
+tree_fit %>%
+  collect_metrics() %>%
+  print(width = Inf) %>%
+  filter(.metric == "roc_auc") %>%
+  mutate(tree_depth = as.factor(tree_depth)) %>%
+  ggplot(mapping = aes(x = cost_complexity, y = mean, color = tree_depth)) +
+  geom_point() + 
+  geom_line() + 
+  labs(x = "cost_complexity", y = "CV ROC AUC", color = "tree_depth") 
+
+
+tree_fit %>%
+  show_best("roc_auc")
+
+
+best_tree <- tree_fit %>%
+  select_best("roc_auc")
+best_tree
+
+```
+
+Apply the Test data:
+
+```{r,eval=T}
+# Final workflow
+final_wf <- tree_wf %>%
+  finalize_workflow(best_tree)
+final_wf
+
+
+# Fit the whole training set, then predict the test cases
+final_fit <- 
+  final_wf %>%
+  last_fit(data_split)
+final_fit
+
+
+# Test metrics
+final_fit %>% 
+  collect_metrics()
+
+```
+
+From the test metrics, we can see that the accuracy is 0.7250000, and the ROC AUC is 0.7596114.
+
+```{r,eval=T}
+library(rpart.plot)
+final_tree <- extract_workflow(final_fit)
+final_tree
+
+final_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+
+library(vip)
+
+final_tree %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+```
+
+**Random Forests**
+
+```{r,eval=T}
+rf_recipe <- 
+  recipe(
+    Sales ~ ., 
+    data = Carseats_training
+  ) %>%
+  # # create traditional dummy variables (not necessary for random forest in R)
+  # step_dummy(all_nominal()) %>%
+  # zero-variance filter
+  step_zv(all_numeric_predictors()) %>% 
+  # # center and scale numeric data (not necessary for random forest)
+  # step_normalize(all_numeric_predictors()) %>%
+  # estimate the means and standard deviations
+  prep(training = Carseats_training, retain = TRUE)
+rf_recipe
+```
+
+```{r,eval=T}
+rf_mod <- 
+  rand_forest(
+    mode = "classification",
+    # Number of predictors randomly sampled in each split
+    mtry = tune(),
+    # Number of trees in ensemble
+    trees = tune()
+  ) %>% 
+  set_engine("ranger")
+rf_mod
+
+
+rf_wf <- workflow() %>%
+  add_recipe(rf_recipe) %>%
+  add_model(rf_mod)
+rf_wf
+
+
+param_grid <- grid_regular(
+  trees(range = c(100L, 300L)), 
+  mtry(range = c(1L, 5L)),
+  levels = c(3, 5)
+  )
+param_grid
+
+
+set.seed(20230920)
+
+folds <- vfold_cv(Carseats_training, v = 5)
+folds
+
+
+rf_fit <- rf_wf %>%
+  tune_grid(
+    resamples = folds,
+    grid = param_grid,
+    metrics = metric_set(roc_auc, accuracy)
+    )
+rf_fit
+
+rf_fit %>%
+  collect_metrics() %>%
+  print(width = Inf) %>%
+  filter(.metric == "roc_auc") %>%
+  mutate(mtry = as.factor(mtry)) %>%
+  ggplot(mapping = aes(x = trees, y = mean, color = mtry)) +
+  # geom_point() + 
+  geom_line() + 
+  labs(x = "Num. of Trees", y = "CV AUC")
+
+
+rf_fit %>%
+  show_best("roc_auc")
+
+
+best_rf <- rf_fit %>%
+  select_best("roc_auc")
+best_rf
+
+```
+
+Apply the Test data:
+
+```{r,eval=T}
+# Final workflow
+final_wf <- rf_wf %>%
+  finalize_workflow(best_rf)
+final_wf
+
+
+# Fit the whole training set, then predict the test cases
+final_fit <- 
+  final_wf %>%
+  last_fit(data_split)
+final_fit
+
+
+# Test metrics
+final_fit %>% 
+  collect_metrics()
+```
+
+From the test metrics, we can see that the accuracy is 0.7850000, and the ROC AUC is 0.8924142.
+
+**Boosting**
+
+```{r,eval=T}
+gb_recipe <- 
+  recipe(
+    Sales ~ ., 
+    data = Carseats_training
+  ) %>%
+  # create traditional dummy variables (necessary for xgboost)
+  step_dummy(all_nominal_predictors()) %>%
+  # zero-variance filter
+  step_zv(all_numeric_predictors()) %>% 
+  # estimate the means and standard deviations
+  prep(training = Carseats_training, retain = TRUE)
+gb_recipe
+```
+
+```{r,eval=T}
+gb_mod <- 
+  boost_tree(
+    mode = "classification",
+    trees = 1000, 
+    tree_depth = tune(),
+    learn_rate = tune()
+  ) %>% 
+  set_engine("xgboost")
+gb_mod
+
+gb_wf <- workflow() %>%
+  add_recipe(gb_recipe) %>%
+  add_model(gb_mod)
+gb_wf
+
+
+param_grid <- grid_regular(
+  tree_depth(range = c(1L, 3L)),
+  learn_rate(range = c(-5, 2), trans = log10_trans()),
+  levels = c(3, 10)
+  )
+param_grid
+
+set.seed(20230920)
+
+folds <- vfold_cv(Carseats_training, v = 5)
+folds
+
+gb_fit <- gb_wf %>%
+  tune_grid(
+    resamples = folds,
+    grid = param_grid,
+    metrics = metric_set(roc_auc, accuracy)
+    )
+gb_fit
+
+
+gb_fit %>%
+  collect_metrics() %>%
+  print(width = Inf) %>%
+  filter(.metric == "roc_auc") %>%
+  mutate(tree_depth = as.factor(tree_depth)) %>%
+  ggplot(mapping = aes(x = learn_rate, y = mean, color = tree_depth)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Learning Rate", y = "CV AUC") +
+  scale_x_log10()
+
+
+gb_fit %>%
+  show_best("roc_auc")
+
+
+best_gb <- gb_fit %>%
+  select_best("roc_auc")
+best_gb
+
+```
+
+Apply the Test data:
+
+```{r,eval=T}
+# Final workflow
+final_wf <- gb_wf %>%
+  finalize_workflow(best_gb)
+final_wf
+
+
+# Fit the whole training set, then predict the test cases
+final_fit <- 
+  final_wf %>%
+  last_fit(data_split)
+final_fit
+
+
+# Test metrics
+final_fit %>% 
+  collect_metrics()
+
+
+```
+
+From the test metrics, we can see that the accuracy is 0.8200000, and the ROC AUC is 0.9215585.
+
+Among the three models, the Boosting model has the best performance, with the highest accuracy and ROC AUC. And the classification tree model has the worst performance, with the lowest accuracy and ROC AUC.
+
+</font>

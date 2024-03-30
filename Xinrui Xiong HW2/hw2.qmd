@@ -1,0 +1,633 @@
+---
+title: "Biostat 212a Homework 2"
+subtitle: "Due Feb 6, 2024 @ 11:59PM"
+author: "Xinrui Xiong 806329308"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+engine: knitr
+knitr:
+  opts_chunk: 
+    fig.align: 'center'
+    # fig.width: 6
+    # fig.height: 4
+    message: FALSE
+    cache: false
+---
+
+## ISL Exercise 4.8.1 (10pts)
+
+Using a little bit of algebra, prove that (4.2) is equivalent to (4.3). In other words, the logistic function representation and logit representation for the logistic regression model are equivalent.
+
+<font color=Blue>
+
+We have (4.2),
+
+$$
+p(X)=\frac{e^ {\beta_0+\beta_1X} }{1+e^ {\beta_0+\beta_1X}} 
+$$
+
+since $1+e^ {\beta_0+\beta_1X} \neq 0$, we have
+
+$$
+\begin{align}
+p(X)+p(X)e^ {\beta_0+\beta_1X}&=e^ {\beta_0+\beta_1X} 
+\iff\\
+p(X)&=e^ {\beta_0+\beta_1X}(1-p(X))
+\end{align}
+$$
+
+since $1-p(X)\neq0$,
+
+we have
+
+$$
+\frac{p(X)}{1-p(X)}=e^ {\beta_0+\beta_1X}.
+$$
+
+So (4.2) is equivalent to (4.3)
+
+</font>
+
+## ISL Exercise 4.8.6 (10pts)
+
+Suppose we collect data for a group of students in a statistics class with variables $X_1$ =hours studied, $X_2$ =undergrad GPA, and $Y$ = receive an A. We fit a logistic regression and produce estimated coefficient, $\beta_0$ = −6; $\beta_1$ = 0.05; $\beta_2$ = 1.
+
+\(a\) Estimate the probability that a student who studies for 40 h and has an undergrad GPA of 3:5 gets an A in the class.
+
+<font color =Blue>
+
+We have the logic regression $$
+\log \frac{p(X)}{1-p(X)}=-6+0.05X_1+X_2
+$$
+
+substitute the arguments, we have
+
+$$
+\begin{aligned}
+\frac{p(X)}{1-p(X)}&=e^ {-0.5}\\
+p(X)&=\frac{e^ {-0.5}}{1+e^ {-0.5}}=0.3775
+\end{aligned}
+$$
+
+</font>
+
+\(b\) How many hours would the student in part (a) need to study to have a 50% chance of getting an A in the class?
+
+<font color =Blue>
+
+Let $p(X)=0.5$, while $X_2=3.5$,
+
+we have
+
+$$
+X_1=\frac{\log\frac{p(X)}{1-p(X)}-\beta_0-\beta_2X_2}{\beta_1}=50.
+$$
+
+So, the student need to study 50 hours to have a 50% chance of getting an A in the class.
+
+</font>
+
+## ISL Exercise 4.8.9 (10pts)
+
+This problem has to do with odds.
+
+\(a\) On average, what fraction of people with an odds of 0.37 of defaulting on their credit card payment will in fact default?
+
+<font colore=Blue>
+
+Using $p(X)$ as the probability of a people will in fact default,
+
+we have
+
+$$
+\begin{aligned}
+\frac{p(X)}{1-p(X)}&=0.37,\\
+p(X)&=0.2701.
+\end{aligned}
+$$
+
+</font>
+
+So, on average, 74% of people will in fact default.
+
+(b) Suppose that an individual has a 16% chance of defaulting on her credit card payment. What are the odds that she will default?
+
+<font colore=Blue>
+
+$$
+\frac{p(X)}{1-p(X)}=0.1905.
+$$
+
+So the odds is 0.1905.
+
+</font>
+
+## ISL Exercise 4.8.13 (a)-(i) (50pts)
+
+This question should be answered using the Weekly data set, which is part of the ISLR2 package. This data is similar in nature to the Smarket data from this chapter's lab, except that it contains 1,089 weekly returns for 21 years, from the beginning of 1990 to the end of 2010.
+
+\(a\) Produce some numerical and graphical summaries of the Weekly data. Do there appear to be any patterns? <font color =Blue>
+
+```{r}
+library(ISLR2)
+?Weekly # read the document of Weekly dataset
+# numerical summaries:
+summary(Weekly)
+cor(Weekly[1:8]) # exclued the non-numeric variable
+```
+
+By using the summary(), we can obtain a According to the results cor(), the variables Year and Volume appear to be associated, while other variables show little association.
+
+```{r}
+# graphical summaries:
+library(ggplot2)
+library(GGally)
+ggpairs(
+  data = Weekly, 
+  mapping = aes(), 
+  lower = list(continuous = "smooth", combo = "box", discrete = "ratio")
+  ) + 
+  labs(title = "Weekly S&P Stock Market Data")
+```
+
+```{r}
+# Visualize Volume ~ Year
+ggplot(
+  data = Weekly, 
+  mapping = aes(x = Volume, y = Year, color = Direction)
+  ) + 
+  geom_point() + 
+  labs(
+    title = "Weekly S&P Stock Market Data", 
+    x = "Volume", 
+    y = "Year"
+    )
+```
+
+```{r}
+# Visualize Lag ~ Direction
+ggplot(
+  data = Weekly, 
+  mapping = aes(x = Direction, y = Lag1)
+  ) + 
+  geom_boxplot() + 
+  labs(
+    title = "Weekly S&P Stock Market Data", 
+    x = "Direction", 
+    y = "Lag1"
+    )
+
+ggplot(
+  data = Weekly, 
+  mapping = aes(x = Direction, y = Lag2)
+  ) + 
+  geom_boxplot() + 
+  labs(
+    title = "Weekly S&P Stock Market Data", 
+    x = "Direction", 
+    y = "Lag2"
+    )
+
+ggplot(
+  data = Weekly, 
+  mapping = aes(x = Direction, y = Lag3)
+  ) + 
+  geom_boxplot() + 
+  labs(
+    title = "Weekly S&P Stock Market Data", 
+    x = "Direction", 
+    y = "Lag3"
+    )
+
+ggplot(
+  data = Weekly, 
+  mapping = aes(x = Direction, y = Lag4)
+  ) + 
+  geom_boxplot() + 
+  labs(
+    title = "Weekly S&P Stock Market Data", 
+    x = "Direction", 
+    y = "Lag4"
+    )
+
+ggplot(
+  data = Weekly, 
+  mapping = aes(x = Direction, y = Lag5)
+  ) + 
+  geom_boxplot() + 
+  labs(
+    title = "Weekly S&P Stock Market Data", 
+    x = "Direction", 
+    y = "Lag5"
+    )
+```
+
+With the graphic information from the paired points plot and points plot, the association between Year and Volume is proven. The boxplots display the distribution of Lag1\~Lag5 based on Direction, which don't appear to be different between the two directions.
+
+</font>
+
+\(b\) Use the full data set to perform a logistic regression with Direction as the response and the five lag variables plus Volume as predictors. Use the summary function to print the results. Do any of the predictors appear to be statistically significant? If so, which ones?
+
+<font color = Blue>
+
+```{r}
+library(gtsummary)
+logit_mod <- glm(
+  Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, 
+  family = binomial, 
+  data = Weekly
+  )
+
+contrasts(Weekly$Direction) # to know which one was transformed as "1", Up or Down?
+
+summary(logit_mod)
+```
+
+From the first part of results, we know that "Down" was transformed to "0", while "Up" was transformed to "1". According to the results of summary(), we have a logic regression formula:
+
+$$
+P(Direction=1)=\frac{1}{e^{(0.26686-0.04127Lag_1+0.05844Lag_2-0.01606Lag_3-0.02779Lag_4-0.01447Lag_5-0.02274Volume)}}
+$$
+
+To determine the significant predictors, we shall see the "Pr(\>\|z\|)" column, and since $Lag_2$ has a Pr(\>\|z\|)\<0.05, it is the only predictor that is statistically significant.
+
+</font>
+
+\(c\) Compute the confusion matrix and overall fraction of correct predictions. Explain what the confusion matrix is telling you about the types of mistakes made by logistic regression.
+
+<font color = Blue>
+
+```{r}
+# Predicted labels from logistic regression
+logit_pred = ifelse(
+  predict(logit_mod, Weekly, type = "response") > 0.5,
+  "Up",
+  "Down"
+)
+
+# Confusion matrix
+logit_cfm = table(Predicted = logit_pred, RealDir = Weekly$Direction)
+print(logit_cfm)
+
+# Accuracy
+(logit_cfm['Down', 'Down'] + logit_cfm['Up', 'Up']) / sum(logit_cfm)
+```
+
+According to the confusion matrix, the model has a correction rate of 56.10652%, while the error rate of this model is 43.89348%. Separately, the model has a correction rate of $\frac{557}{557+48}=92.06612\%$ when predicting observation with Up Direction, and $\frac{54}{54+430}=11.15702\%$ for the observation with Down Direction.
+
+</font>
+
+\(d\) Now fit the logistic regression model using a training data period from 1990 to 2008, with Lag2 as the only predictor. Compute the confusion matrix and the overall fraction of correct predictions for the held out data (that is, the data from 2009 and 2010).
+
+<font color =Blue>
+
+```{r}
+Weekly_train<-Weekly[1990<=Weekly$Year & Weekly$Year<=2008,]
+Weekly_test<-Weekly[2009<=Weekly$Year & Weekly$Year<=2010,]
+
+
+logit_mod1 <- glm(
+  Direction ~ Lag2, 
+  family = binomial, 
+  data = Weekly_train
+  )
+
+summary(logit_mod1)
+
+# Predicted labels from logistic regression
+logit_pred1 = ifelse(
+  predict(logit_mod1, Weekly_test, type = "response") > 0.5,
+  "Up",
+  "Down"
+)
+
+# Confusion matrix
+logit_cfm1 = table(Predicted = logit_pred1, RealDir = Weekly_test$Direction)
+print(logit_cfm1)
+
+# Accuracy
+(logit_cfm1['Down', 'Down'] + logit_cfm1['Up', 'Up']) / sum(logit_cfm1)
+
+```
+
+So, the overall fraction of correct predictions rate is 62.5%.
+
+</font>
+
+\(e\) Repeat (d) using LDA.
+
+<font color =Blue>
+
+```{r}
+library(MASS)
+
+# Fit LDA
+lda_mod <- lda(
+  Direction ~ Lag2, 
+  data = Weekly_train
+  )
+lda_mod
+
+# Predicted labels from LDA
+lda_pred = predict(lda_mod, Weekly_test)
+
+# Confusion matrix
+(lda_cfm = table(Predicted = lda_pred$class, RealDir = Weekly_test$Direction))
+
+# Accuracy
+(lda_cfm['Down', 'Down'] + lda_cfm['Up', 'Up']) / sum(lda_cfm)
+```
+
+So, the overall fraction of correct predictions rate is 62.5%.
+
+</font>
+
+\(f\) Repeat (d) using QDA.
+
+<font color = Blue>
+
+```{r}
+# Fit QDA
+qda_mod <- qda(
+  Direction ~ Lag2, 
+  data = Weekly_train
+  )
+qda_mod
+
+# Predicted labels from LDA
+qda_pred = predict(qda_mod, Weekly_test)
+
+# Confusion matrix
+(qda_cfm = table(Predicted = qda_pred$class, RealDir = Weekly_test$Direction))
+
+# Accuracy
+(qda_cfm['Down', 'Down'] + qda_cfm['Up', 'Up']) / sum(qda_cfm)
+```
+
+So, the overall fraction of correct predictions rate is 58.65385%.
+
+</font>
+
+\(g\) Repeat (d) using KNN with K = 1.
+
+<font color =Blue>
+
+```{r}
+library(class)
+
+# KNN prediction with K = 1
+knn_pred <- knn(
+  train = data.frame(Weekly_train$Lag2), 
+  test = data.frame(Weekly_test$Lag2),
+  cl = Weekly_train$Direction,
+  k = 1
+  )
+
+# Confusion matrix
+(knn_cfm = table(Predicted = knn_pred, RealDir = Weekly_test$Direction))
+
+(knn_cfm['Down', 'Down'] + knn_cfm['Up', 'Up']) / sum(knn_cfm)
+```
+
+So, the overall fraction of correct predictions rate is 50%.
+
+</font>
+
+\(h\) Repeat (d) using naive Bayes.
+
+<font color =Blue>
+
+```{r}
+library(e1071)
+
+# Fit Naive Bayes classifier
+nb_mod <- naiveBayes(
+  Direction~Lag2, 
+  data = Weekly_train
+  )
+nb_mod
+
+# Predicted labels from Naive Bayes
+nb_pred = predict(nb_mod, Weekly_test)
+
+# Confusion matrix
+(nb_cfm = table(Predicted = nb_pred, RealDir = Weekly_test$Direction))
+
+(nb_cfm['Down', 'Down'] + nb_cfm['Up', 'Up']) / sum(nb_cfm)
+```
+
+So, the overall fraction of correct predictions rate is 58.65385%.
+
+</font>
+
+\(i\) Which of these methods appears to provide the best results on this data?
+
+<font color =Blue>
+
+The Logistic Regression and LDA have the highest correction rate, while the KNN (K=1) has the least. So we may conclude that Logistic Regression and LDA appear to provide the best results on Weekly data.
+
+</font>
+
+## Bonus question: ISL Exercise 4.8.13 Part (j) (30pts)
+
+\(j\) Experiment with different combinations of predictors, including possible transformations and interactions, for each of the methods. Report the variables, method, and associated confusion matrix that appears to provide the best results on the held out data. Note that you should also experiment with values for K in the KNN classifier.
+
+<font color =Blue>
+
+Let's start with Logic Regression. According to the results from (b), we can find that Lag1 is also relatively significant (although Pr(\>\|z\|) is not less than 0.05). So this time we may consider using Lag1 and Lag2 as predictors.
+
+```{r}
+logit_mod <- glm(
+  Direction ~ Lag1 + Lag2, 
+  family = binomial, 
+  data = Weekly_train
+  )
+
+summary(logit_mod)
+
+# Predicted labels from logistic regression
+logit_pred = ifelse(
+  predict(logit_mod, Weekly_test, type = "response") > 0.5,
+  "Up",
+  "Down"
+)
+
+# Confusion matrix
+logit_cfm = table(Predicted = logit_pred, RealDir = Weekly_test$Direction)
+print(logit_cfm)
+
+# Accuracy
+(logit_cfm['Down', 'Down'] + logit_cfm['Up', 'Up']) / sum(logit_cfm)
+```
+
+As we can see, the correction rate decrease, so we may keep the origin method.
+
+For LDA, we can use the ratio of Lag2 and Lag1 as predictor,
+
+```{r}
+
+# Fit LDA
+lda_mod <- lda(
+  Direction ~ Lag2/Lag1, 
+  data = Weekly_train
+  )
+lda_mod
+
+# Predicted labels from LDA
+lda_pred = predict(lda_mod, Weekly_test)
+
+# Confusion matrix
+(lda_cfm = table(Predicted = lda_pred$class, RealDir = Weekly_test$Direction))
+
+# Accuracy
+(lda_cfm['Down', 'Down'] + lda_cfm['Up', 'Up']) / sum(lda_cfm)
+```
+
+The result still decreases.
+
+We may now consider keeping the only one significant variable, Lag2. So we choose $\log{(Lag_2)}$ as predictor.
+
+```{r}
+# Fit QDA
+qda_mod <- qda(
+  Direction ~ log(abs(Lag2)), 
+  data = Weekly_train
+  )
+qda_mod
+
+# Predicted labels from LDA
+qda_pred = predict(qda_mod, Weekly_test)
+
+# Confusion matrix
+(qda_cfm = table(Predicted = qda_pred$class, RealDir = Weekly_test$Direction))
+
+# Accuracy
+(qda_cfm['Down', 'Down'] + qda_cfm['Up', 'Up']) / sum(qda_cfm)
+```
+
+The result remains the extreme situation, which proves that the QDA is not a good way for this question.
+
+For KNN, we can try to set K=10 and 100 to have a comparison.
+
+```{r}
+
+# KNN prediction with K = 10
+knn_pred <- knn(
+  train = data.frame(Weekly_train$Lag2), 
+  test = data.frame(Weekly_test$Lag2),
+  cl = Weekly_train$Direction,
+  k = 10
+  )
+
+# Confusion matrix
+(knn_cfm = table(Predicted = knn_pred, RealDir = Weekly_test$Direction))
+
+(knn_cfm['Down', 'Down'] + knn_cfm['Up', 'Up']) / sum(knn_cfm)
+
+
+# KNN prediction with K = 100
+knn_pred1 <- knn(
+  train = data.frame(Weekly_train$Lag2), 
+  test = data.frame(Weekly_test$Lag2),
+  cl = Weekly_train$Direction,
+  k = 100
+  )
+
+# Confusion matrix
+(knn_cfm1 = table(Predicted = knn_pred1, RealDir = Weekly_test$Direction))
+
+(knn_cfm1['Down', 'Down'] + knn_cfm1['Up', 'Up']) / sum(knn_cfm1)
+```
+
+K=10 shows a better outcome.
+
+Lastly, try the ${Lag_2}^2$ as predictor for native Bayes method.
+
+```{r}
+# Fit Naive Bayes classifier
+nb_mod <- naiveBayes(
+  Direction~(Lag2)^2, 
+  data = Weekly_train
+  )
+nb_mod
+
+# Predicted labels from Naive Bayes
+nb_pred = predict(nb_mod, Weekly_test)
+
+# Confusion matrix
+(nb_cfm = table(Predicted = nb_pred, RealDir = Weekly_test$Direction))
+
+(nb_cfm['Down', 'Down'] + nb_cfm['Up', 'Up']) / sum(nb_cfm)
+```
+
+The result, as well as the trend, arr the same as QDA. So native Bayes isn't suitable method for this question as well.
+
+In conclusion, the best results are still provided by using Lag2 as predictor in Logistic Regression and LDA.
+
+</font>
+
+## Bonus question: ISL Exercise 4.8.4 (30pts)
+
+When the number of features p is large, there tends to be a deterioration in the performance of KNN and other local approaches that perform prediction using only observations that are near the test observationfor which a prediction must be made. This phenomenon is known as the curse of dimensionality, and it ties into the fact that non-parametric approaches often perform poorly when p is large. We will now investigate this curse.
+
+\(a\) Suppose that we have a set of observations, each with measurements on p = 1 feature, X. We assume that X is uniformly (evenly) distributed on \[0, 1\]. Associated with each observation is a response value. Suppose that we wish to predict a test observation's response using only observations that are within 10% of the range of X closest to that test observation. For instance, in order to predict the response for a test observation with X = 0.6, we will use observations in the range \[0.55, 0.65\]. On average, what fraction of the available observations will we use to make the prediction?
+
+<font color = Blue>
+
+In the case that $X$∈\[0.05,0.95\], apparently the availiable range is \[$X$-0.05,$X$+0.05\].
+
+**However, since** $X$ **is uniformly (evenly) distributed on \[0, 1\],** $X$ **might be less than 0.05 or greater than 0.95**. At this time, the range is $X$+0.05 or 1.05-X. Than we may calculate the fraction as follows:
+
+$$
+\int_{0.05}^{0.95}0.1dX+\int_{0}^{0.05}(X+0.05)dX+\int_{0.95}^{1}(1.05-X)dX=0.0975.
+$$
+
+Since the denominator=1, the fraction is 0.0975.
+
+</font>
+
+\(b\) Now suppose that we have a set of observations, each with measurements on p = 2 features, $X_1$ and $X_2$ . We assume that ($X_1$ , $X_2$ ) are uniformly distributed on \[0, 1\] × \[0, 1\]. We wish to predict a test observation's response using only observations that are within 10% of the range of $X_1$ and within 10% of the range of $X_x$ closest to that test observation. For instance, in order to predict the response for a test observation with $X_1$ = 0.6 and $X_2$ = 0.35, we will use observations in the range \[0.55, 0.65\] for $X_1$ and in the range \[0.3, 0.4\] for $X_2$ . On average, what fraction of the available observations will we use to make the prediction?
+
+<font color = Blue>
+
+Since the $X_1$ and $X_2$ are assumed independent. Using the conclusion from (a), the fraction will be
+
+$$
+0.0975 \times 0.0975=0.00950625
+$$
+
+</font>
+
+\(c\) Now suppose that we have a set of observations on p = 100 features. Again the observations are uniformly distributed on each feature, and again each feature ranges in value from 0 to 1. We wish to predict a test observation's response using observations within the 10% of each feature's range that is closest to that test observation. What fraction of the available observations will we use to make the prediction?
+
+<font color = Blue>
+
+In this situation, similarly, the fraction will be
+
+$$
+0.0975^{100} \approx 0
+$$
+
+</font>
+
+\(d\) Using your answers to parts (a)-(c), argue that a drawback of KNN when p is large is that there are very few training observations "near" any given test observation.
+
+<font color = Blue>
+
+Apparently, since the fraction is a decimal between 0 and 1, and the fraction of the available observations we can use to make the prediction is $0.0975^p$, that means with the higher p, the fraction will be smaller.
+
+</font>
+
+\(e\) Now suppose that we wish to make a prediction for a test observation by creating a p-dimensional hypercube centered around the test observation that contains, on average, 10% of the training observations. For p = 1; 2, and 100, what is the length of each side of the hypercube? Comment on your answer.
+
+<font color = Blue>
+
+Supoose the length of each side is $X$, and the total range is 1. That means
+
+$$
+X^p=0.1,
+$$
+
+and $X$=0.1, 0.3162278, 1(nearly) for each p.
+
+</font>
